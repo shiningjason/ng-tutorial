@@ -1,0 +1,107 @@
+﻿<!doctype html>
+<html ng-app="hottyApp">
+  <head>
+    <title>我愛正妹</title>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css">
+    <style>
+      .search-bar { margin-bottom: 10px; }
+      th[ng-click] { cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header"><h1>我愛正妹</h1></div>
+      <div ng-controller="hottyCtrl">
+        <input type="text" class="form-control search-bar" ng-model="query" placeholder="正妹搜尋吧">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th ng-click="doOrder('name')">名稱</th>
+              <th ng-click="doOrder('star')">喜愛</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="hotty in hotties | filter : query | orderBy : field : reverse">
+              <td>{{ hotty.name }}</td>
+              <td>{{ hotty.star }}</td>
+              <td>
+                <button class="btn btn-danger" ng-click="deleteHotty(hotty)">刪除</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <form class="form-inline">
+          <input type="text" class="form-control" ng-model="newHotty.name" placeholder="名稱">
+          <input type="number" class="form-control" ng-model="newHotty.star" placeholder="喜愛">
+          <button type="button" class="btn btn-default" ng-click="addHotty()">新增正妹</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.js"></script>
+    <script>
+      var app = angular.module('hottyApp', []);
+
+      app.controller('hottyCtrl', function ($scope, hottyService) {
+
+        $scope.refresh = function () {
+          hottyService.findAll().success(function (data) {
+            $scope.hotties = data.results;
+          });
+        };
+
+        $scope.addHotty = function () {
+          hottyService.create($scope.newHotty).success(function () {
+            $scope.refresh();
+          });
+          $scope.newHotty = {};
+        };
+
+        $scope.deleteHotty = function (hotty) {
+          hottyService.delete(hotty.objectId).success(function () {
+            $scope.refresh();
+          });
+        };
+
+        $scope.doOrder = function (field) {
+          $scope.field = field;
+          $scope.reverse = !$scope.reverse;
+        };
+
+        $scope.refresh();
+      });
+
+      app.service('hottyService', function ($http) {
+
+        var resourceUrl = 'https://api.parse.com/1/classes/hotty',
+            config = {
+              headers: {
+                'X-Parse-Application-Id': '6IvLcxrIoF8OqEqy1ca0RIxAg0tPKufGAIGLHzyb',
+                'X-Parse-REST-API-Key': 'y0k1r7ECfrE5RZrYDqKyLNWFS19qSPGlqLCXtEuj'
+              }
+            };
+
+        this.findAll = function () {
+          return $http.get(resourceUrl, config);
+        };
+
+        this.findOne = function (hottyId) {
+          return $http.get(resourceUrl + '/' + hottyId, config);
+        };
+
+        this.create = function (hotty) {
+          return $http.post(resourceUrl, hotty, config);
+        };
+
+        this.update = function (hottyId, hotty) {
+          return $http.put(resourceUrl + '/' + hottyId, hotty, config);
+        };
+
+        this.delete = function (hottyId) {
+          return $http.delete(resourceUrl + '/' + hottyId, config);
+        };
+      });
+    </script>
+  </body>
+</html>
