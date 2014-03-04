@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html ng-app>
+  <head>
+    <title>我愛正妹</title>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css">
+    <style>
+      .search-bar { margin-bottom: 10px; }
+      th[ng-click] { cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header"><h1>我愛正妹</h1></div>
+      <div ng-controller="hottyCtrl">
+        <input type="text" class="form-control search-bar" ng-model="query" placeholder="正妹搜尋吧">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th ng-click="doOrder('name')">名稱</th>
+              <th ng-click="doOrder('star')">喜愛</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="hotty in hotties | filter : query | orderBy : field : reverse">
+              <td>{{ hotty.name }}</td>
+              <td>{{ hotty.star }}</td>
+              <td>
+                <button class="btn btn-danger" ng-click="deleteHotty($index)">刪除</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <form class="form-inline">
+          <input type="text" class="form-control" ng-model="newHotty.name" placeholder="名稱">
+          <input type="number" class="form-control" ng-model="newHotty.star" placeholder="喜愛">
+          <button type="button" class="btn btn-default" ng-click="addHotty()">新增正妹</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.js"></script>
+    <script>
+      function hottyCtrl($scope) {
+        $scope.hotties = [
+          { name: 'Angelababy', star: 4 },
+          { name: '楊冪', star: 5 },
+          { name: '林依晨', star: 4.5 }
+        ];
+
+        $scope.addHotty = function () {
+          $scope.hotties.push($scope.newHotty);
+          $scope.newHotty = {};
+        };
+
+        $scope.deleteHotty = function (index) {
+          $scope.hotties.splice(index, 1);
+        };
+
+        $scope.doOrder = function (field) {
+          $scope.field = field;
+          $scope.reverse = !$scope.reverse;
+        };
+      }
+    </script>
+  </body>
+</html>
