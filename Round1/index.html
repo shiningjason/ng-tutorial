@@ -16,9 +16,9 @@
         <table class="table table-bordered table-striped">
           <thead>
             <tr>
-              <th ng-click="doOrder('name')">名稱</th>
-              <th ng-click="doOrder('star')">喜愛</th>
-              <th></th>
+              <th class="col-xs-4" ng-click="doOrder('name')">名稱</th>
+              <th class="col-xs-4" ng-click="doOrder('star')">喜愛</th>
+              <th class="col-xs-4"></th>
             </tr>
           </thead>
           <tbody>
@@ -26,7 +26,7 @@
               <td>{{ hotty.name }}</td>
               <td>{{ hotty.star }}</td>
               <td>
-                <button class="btn btn-danger" ng-click="deleteHotty($index)">刪除</button>
+                <button class="btn btn-danger" ng-click="deleteHotty(hotty)">刪除</button>
               </td>
             </tr>
           </tbody>
@@ -53,7 +53,8 @@
           $scope.newHotty = {};
         };
 
-        $scope.deleteHotty = function (index) {
+        $scope.deleteHotty = function (hotty) {
+          var index = $scope.hotties.indexOf(hotty);
           $scope.hotties.splice(index, 1);
         };
 
